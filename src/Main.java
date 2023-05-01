@@ -87,7 +87,29 @@ public class Main {
                 case 3:
                     manager.printMovieTitles();
                     System.out.print("\nNázev filmu k úpravě: ");
-                    //dodelat
+                    movie = manager.getMovieByTitle(scanner.nextLine());
+                    if(movie != null){
+                        System.out.println("\n[1] úprava názvu\n[2] změnit jméno režiséra\n[3] změnit rok vydání\n[4] upravit seznam " + (movie.getType() == MovieType.ANIMATED ? "animátorů" : "herců") + (movie.getType() == MovieType.ANIMATED ? "\n[5] změnit doporučený věk" : ""));
+                        option = scanner.nextByte();
+                        scanner.nextLine();
+
+                        switch(option){
+                            case 1:
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                break;
+                            case 4:
+                                break;
+                            case 5:
+                                break;
+                            default:
+                                break;
+                        }
+                    } else {
+                        System.out.println("Film není v databázi!");
+                    }
                     break;
                 case 4:
                     System.out.println();
