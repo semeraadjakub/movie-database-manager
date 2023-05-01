@@ -1,6 +1,7 @@
 package movie;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MovieManager {
     ArrayList<Movie> movies;
@@ -8,11 +9,33 @@ public class MovieManager {
         movies = new ArrayList<Movie>();
     }
 
-    public int addMovie(MovieType type, String movieName, String directorName){
+    public int addMovie(MovieType type, String title, String director, int releaseYear){
+        movies.add(new LiveActionMovie(type, title, director, releaseYear));
         return 0;
     }
 
-    public int deleteMovie(){
+    public int addMovie(MovieType type, String title, String director, int releaseYear, List<String> actorNames){
+        movies.add(new LiveActionMovie(type, title, director, releaseYear, actorNames));
+        return 0;
+    }
+
+    public int addMovie(MovieType type, String title, String director, int releaseYear, int recommendedAge){
+        movies.add(new AnimatedMovie(type, title, director, releaseYear, recommendedAge));
+        return 0;
+    }
+
+    public int addMovie(MovieType type, String title, String director, int releaseYear, int recommendedAge, List<String> animatorNames){
+        movies.add(new AnimatedMovie(type, title, director, releaseYear, recommendedAge, animatorNames));
+        return 0;
+    }
+
+    public int deleteMovieByTitle(String title){
+        for (int i = 0; i < movies.size(); i++) {
+            if (movies.get(i).getTitle().equals(title)) {
+                movies.remove(i);
+                i--;
+            }
+        }
         return 0;
     }
 
@@ -24,8 +47,8 @@ public class MovieManager {
         return 0;
     }
 
-    public String getMovies(){
-        return null;
+    public ArrayList<Movie> getMovies(){
+        return movies;
     }
 
     public String getMoviesByAnimator(){

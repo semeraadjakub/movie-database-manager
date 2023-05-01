@@ -1,12 +1,26 @@
 package movie;
 
+import worker.Actor;
+import worker.Animator;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class LiveActionMovie extends Movie{
-    public LiveActionMovie(String MOVIE_NAME) {
-        super(MOVIE_NAME);
+    private ArrayList<Actor> actors = null;
+    public LiveActionMovie(MovieType type, String title, String director, int releaseYear) {
+        super(type, title, director, releaseYear);
     }
 
-    @Override
-    public String toString(){
-        return null;
+    public LiveActionMovie(MovieType type, String title, String director, int releaseYear, List<String> actorNames) {
+        super(type, title, director, releaseYear);
+        actors = new ArrayList<Actor>();
+
+        for(String actor : actorNames)
+            actors.add(new Actor(actor));
+    }
+
+    public ArrayList<Actor> getActorList(){
+        return actors;
     }
 }
