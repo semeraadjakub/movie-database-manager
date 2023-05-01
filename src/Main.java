@@ -1,7 +1,4 @@
 import movie.*;
-import worker.Actor;
-import worker.Animator;
-import worker.Worker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +21,7 @@ public class Main {
         while(running) {
             System.out.print(MENU_STRING);
             option = scanner.nextByte();
+            Movie movie;
             scanner.nextLine();
             switch(option){
                 case 0:
@@ -82,63 +80,63 @@ public class Main {
 
                     break;
                 case 2:
-
-                    System.out.println("\nSeznam filmů v databázi:");
-                    for(Movie movie : manager.getMovies()){
-                        System.out.println(movie.getTitle());
-                    }
-
+                    manager.printMovieTitles();
                     System.out.print("\nNázev filmu k odstranění: ");
                     manager.deleteMovieByTitle(scanner.nextLine());
                     break;
                 case 3:
-
+                    manager.printMovieTitles();
+                    System.out.print("\nNázev filmu k úpravě: ");
+                    //dodelat
                     break;
                 case 4:
                     System.out.println();
-                    for(Movie movie : manager.getMovies()){
-                        System.out.println("Název: " + movie.getTitle());
-                        System.out.println("Druh filmu: " + (movie.getType() == MovieType.ANIMATED ? "Animovaný" : "Hraný"));
-                        System.out.println("Režisér: " + movie.getDirector());
-                        System.out.println("Rok vydání: " + movie.getReleaseYear());
-                        if(movie.getType() == MovieType.ANIMATED){
-                            System.out.println("Doporučený věk diváka: " + ((AnimatedMovie)(movie)).getRecommendedAge());
-                            ArrayList<Animator> animators = ((AnimatedMovie)(movie)).getAnimatorList();
-                            if(animators != null){
-                                System.out.println("Animátoři: ");
-                                for(Animator animator : animators){
-                                    System.out.println("    " + animator.getName());
-                                }
-                            } else {
-                                System.out.println("Animátoři neuvedeni.");
-                            }
-                        } else {
-                            ArrayList<Actor> actors = ((LiveActionMovie)(movie)).getActorList();
-                            if(actors != null){
-                                System.out.println("Herci: ");
-                                for(Actor actor : actors){
-                                    System.out.println("    " + actor.getName());
-                                }
-                            } else {
-                                System.out.println("Herci neuvedeni.");
-                            }
-                        }
-                        System.out.println();
-                    }
+                    manager.printAllMovies();
                     break;
                 case 5:
+                    manager.printMovieTitles();
+                    System.out.print("\nVyhledat informace o: ");
+                    movie = manager.getMovieByTitle(scanner.nextLine());
+                    if(movie != null){
+                        manager.printMovie(movie, true);
+                    }
                     break;
                 case 6:
                     break;
                 case 7:
                     break;
                 case 8:
+                    manager.printMovieTitles();
+                    System.out.print("\nPřidat hodnocení k: ");
+                    movie = manager.getMovieByTitle(scanner.nextLine());
+                    if(movie != null) {
+                        int rating = 0;
+                        if(movie.getType() == MovieType.ANIMATED){
+                            System.out.print("Zadejte hodnocení(1-10): ");
+                            rating = scanner.nextInt();
+                        } else {
+                            System.out.print("Zadejte hodnocení(1-5): ");
+                            rating = scanner.nextInt();
+                        }
+                        scanner.nextLine();
+                        System.out.print("Přejete si přidat slovní ohodnocení?(y/N): ");
+                        if(scanner.nextLine().equalsIgnoreCase("y")){
+                            System.out.print("Slovní hodnocení: ");
+                            manager.rateMovie(movie, rating, scanner.nextLine());
+                        } else {
+                            manager.rateMovie(movie, rating);
+                        }
+
+                    } else {
+                        System.out.println("Film není v databázi!");
+                    }
                     break;
                 case 9:
                     break;
                 case 10:
                     break;
                 default:
+                    System.out.println("Neplatná volba!");
                     break;
             }
         }

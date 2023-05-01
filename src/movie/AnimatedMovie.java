@@ -1,5 +1,6 @@
 package movie;
 
+import custom.Rating;
 import worker.Animator;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 public class AnimatedMovie extends Movie{
 
     private ArrayList<Animator> animators = null;
+
     private int recommendedAge;
     public AnimatedMovie(MovieType type, String title, String director, int releaseYear, int recommendedAge) {
         super(type, title, director, releaseYear);
@@ -30,6 +32,8 @@ public class AnimatedMovie extends Movie{
     public void setRecommendedAge(int recommendedAge){
         this.recommendedAge = recommendedAge;
     }
+
+
 
     public ArrayList<Animator> getAnimatorList(){
         return animators;
