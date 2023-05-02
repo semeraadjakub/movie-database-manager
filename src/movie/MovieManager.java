@@ -72,32 +72,16 @@ public class MovieManager {
         printMovie(movie, printRatings);
     }
 
-    public void printMovie(Movie movie, boolean printRatings){
+    public void printMovie(Movie movie, boolean printRatings) {
         System.out.println("Název: " + movie.getTitle());
         System.out.println("Druh filmu: " + (movie.getType() == MovieType.ANIMATED ? "Animovaný" : "Hraný"));
         System.out.println("Režisér: " + movie.getDirector());
         System.out.println("Rok vydání: " + movie.getReleaseYear());
-        if(movie.getType() == MovieType.ANIMATED){
-            System.out.println("Doporučený věk diváka: " + ((AnimatedMovie)(movie)).getRecommendedAge());
-            ArrayList<Animator> animators = ((AnimatedMovie)(movie)).getAnimatorList();
-            if(animators != null){
-                System.out.println("Animátoři: ");
-                for(Animator animator : animators){
-                    System.out.println("    " + animator.getName());
-                }
-            } else {
-                System.out.println("Animátoři neuvedeni.");
-            }
+        if (movie.getType() == MovieType.ANIMATED) {
+            System.out.println("Doporučený věk diváka: " + ((AnimatedMovie) (movie)).getRecommendedAge());
+            printWorkersList(movie, false);
         } else {
-            ArrayList<Actor> actors = ((LiveActionMovie)(movie)).getActorList();
-            if(actors != null){
-                System.out.println("Herci: ");
-                for(Actor actor : actors){
-                    System.out.println("    " + actor.getName());
-                }
-            } else {
-                System.out.println("Herci neuvedeni.");
-            }
+            printWorkersList(movie, false);
         }
 
         if(printRatings){
@@ -113,6 +97,33 @@ public class MovieManager {
         }
 
         System.out.println();
+    }
+
+    public void printWorkersList(Movie movie, boolean numbers){
+        int count = 1;
+        if(movie.getType() == MovieType.ANIMATED){
+            ArrayList<Animator> animators = ((AnimatedMovie)(movie)).getAnimatorList();
+            if(animators != null){
+                System.out.println("Animátoři: ");
+                for(Animator animator : animators){
+                    System.out.println("    " + (numbers == true ? "[" + count + "] " : "") + animator.getName());
+                    count++;
+                }
+            } else {
+                System.out.println("Animátoři neuvedeni.");
+            }
+        } else {
+            ArrayList<Actor> actors = ((LiveActionMovie)(movie)).getActorList();
+            if(actors != null){
+                System.out.println("Herci: ");
+                for(Actor actor : actors){
+                    System.out.println("    " + (numbers == true ? "[" + count + "] " : "") + actor.getName());
+                    count++;
+                }
+            } else {
+                System.out.println("Herci neuvedeni.");
+            }
+        }
     }
 
     public void printAllMovies(){

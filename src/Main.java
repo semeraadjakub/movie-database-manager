@@ -95,14 +95,57 @@ public class Main {
 
                         switch(option){
                             case 1:
+                                System.out.print("Nový název: ");
+                                movie.setTitle(scanner.nextLine());
                                 break;
                             case 2:
+                                System.out.print("Jméno režiséra: ");
+                                movie.setDirector(scanner.nextLine());
                                 break;
                             case 3:
+                                System.out.print("Rok vydání: ");
+                                movie.setReleaseYear(scanner.nextInt());
+                                scanner.nextLine();
                                 break;
                             case 4:
+                                manager.printWorkersList(movie, true);
+                                System.out.println();
+                                String workerType = (movie.getType() == MovieType.ANIMATED ? "animátora" : "herce");
+                                MovieType type = movie.getType();
+                                System.out.println("Možné operace: ");
+                                System.out.println("    [1] upravit jméno " + workerType);
+                                System.out.println("    [2] odstranit " + workerType);
+                                System.out.print("\noperace: ");
+                                String opt = scanner.nextLine();
+                                String name;
+                                if(opt.contentEquals("1")){
+                                    System.out.print("Jméno " + workerType + ": ");
+                                    name = scanner.nextLine();
+                                    if(type == MovieType.ANIMATED){
+                                        ((AnimatedMovie)(movie)).modifyAnimatorName(name);
+                                    } else {
+                                        ((LiveActionMovie)(movie)).modifyActorName(name);
+                                    }
+
+                                } else if (opt.contentEquals("2")) {
+                                    System.out.print("Jméno " + workerType + ": ");
+                                    name = scanner.nextLine();
+                                    if(type == MovieType.ANIMATED){
+                                        ((AnimatedMovie)(movie)).deleteAnimator(name);
+                                    } else {
+                                        ((LiveActionMovie)(movie)).deleteActor(name);
+                                    }
+                                }
+
                                 break;
                             case 5:
+                                if(movie.getType() == MovieType.ANIMATED){
+                                    System.out.print("Doporučený věk diváka: ");
+                                    ((AnimatedMovie)(movie)).setRecommendedAge(scanner.nextInt());
+                                    scanner.nextLine();
+                                } else {
+                                    System.out.println("Film není animovaný! Nelze nastavit doporučený věk.");
+                                }
                                 break;
                             default:
                                 break;

@@ -22,6 +22,32 @@ public class LiveActionMovie extends Movie{
             actors.add(new Actor(actor));
     }
 
+    private int getActorIndex(String name){
+        for(int i = 0; i < actors.size(); i++)
+            if(actors.get(i).getName().equalsIgnoreCase(name))
+                return i;
+
+        return -1;
+    }
+
+    public boolean deleteActor(String name){
+        int index = getActorIndex(name);
+        if(index != -1){
+            actors.remove(index);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean modifyActorName(String name){
+        int index = getActorIndex(name);
+        if(index != -1){
+            actors.get(index).setName(name);
+            return true;
+        }
+        return false;
+    }
+
     public ArrayList<Actor> getActorList(){
         return actors;
     }

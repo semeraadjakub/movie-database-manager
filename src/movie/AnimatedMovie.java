@@ -33,7 +33,31 @@ public class AnimatedMovie extends Movie{
         this.recommendedAge = recommendedAge;
     }
 
+    private int getAnimatorIndex(String name){
+        for(int i = 0; i < animators.size(); i++)
+            if(animators.get(i).getName().equalsIgnoreCase(name))
+                return i;
 
+        return -1;
+    }
+
+    public boolean deleteAnimator(String name){
+        int index = getAnimatorIndex(name);
+        if(index != -1){
+            animators.remove(index);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean modifyAnimatorName(String name){
+        int index = getAnimatorIndex(name);
+        if(index != -1){
+            animators.get(index).setName(name);
+            return true;
+        }
+        return false;
+    }
 
     public ArrayList<Animator> getAnimatorList(){
         return animators;
