@@ -1,6 +1,5 @@
 package movie;
 
-import custom.Rating;
 import worker.Animator;
 
 import java.util.ArrayList;
@@ -63,5 +62,12 @@ public class AnimatedMovie extends Movie{
 
     public ArrayList<Animator> getAnimatorList(){
         return animators;
+    }
+    public ArrayList<String> getAnimatorListString(){
+        ArrayList<String> animators1 = new ArrayList<String>();
+        for(Animator a : animators){
+            animators1.add(a.getName());
+        }
+        return animators1;
     }
 }

@@ -4,6 +4,7 @@ import Serialization.*;
 import custom.Rating;
 import worker.Actor;
 import worker.Animator;
+import worker.Worker;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,24 +13,36 @@ import java.util.List;
 
 public class MovieManager {
     ArrayList<Movie> movies;
+    ArrayList<Worker> allWorkers;
     public MovieManager(){
         movies = new ArrayList<Movie>();
+        allWorkers = new ArrayList<Worker>();
     }
 
     public void addMovie(MovieType type, String title, String director, int releaseYear){
-        movies.add(new LiveActionMovie(type, title, director, releaseYear));
+        LiveActionMovie movie = new LiveActionMovie(type, title, director, releaseYear);
+        movies.add(movie);
     }
 
     public void addMovie(MovieType type, String title, String director, int releaseYear, List<String> actorNames){
-        movies.add(new LiveActionMovie(type, title, director, releaseYear, actorNames));
+        LiveActionMovie movie = new LiveActionMovie(type, title, director, releaseYear, actorNames);
+        movies.add(movie);
+        for(Worker w : movie.getActorList()){
+            allWorkers.add(w);
+        }
     }
 
     public void addMovie(MovieType type, String title, String director, int releaseYear, int recommendedAge){
-        movies.add(new AnimatedMovie(type, title, director, releaseYear, recommendedAge));
+        AnimatedMovie movie = new AnimatedMovie(type, title, director, releaseYear, recommendedAge);
+        movies.add(movie);
     }
 
     public void addMovie(MovieType type, String title, String director, int releaseYear, int recommendedAge, List<String> animatorNames){
-        movies.add(new AnimatedMovie(type, title, director, releaseYear, recommendedAge, animatorNames));
+        AnimatedMovie movie = new AnimatedMovie(type, title, director, releaseYear, recommendedAge, animatorNames);
+        movies.add(movie);
+        for(Worker w : movie.getAnimatorList()){
+            allWorkers.add(w);
+        }
     }
 
     public void deleteMovieByTitle(String title){
@@ -53,10 +66,6 @@ public class MovieManager {
     public void editMovie(String title){
         Movie movie = getMovieByTitle(title);
         System.out.println("");
-    }
-
-    public int addRating(){
-        return 0;
     }
 
     public ArrayList<Movie> getMovies(){
@@ -135,6 +144,13 @@ public class MovieManager {
         }
     }
 
+    public void printWorkersList(){
+        System.out.println();
+        for(int i = 0; i < allWorkers.size(); i++){
+            System.out.println("[" + Integer.toString((i+1)) + "] " + allWorkers.get(i).getName());
+        }
+    }
+
     public void printAllMovies(){
         for(Movie movie : movies){
             printMovie(movie, false);
@@ -163,12 +179,27 @@ public class MovieManager {
         return rateMovie(getMovieByTitle(title), rating);
     }
 
-    public String getMoviesByAnimator(){
-        return null;
-    }
+    public ArrayList<String> getMovieTitlesByWorker(int index){
+        String name = allWorkers.get(index).getName();
+        ArrayList<String> movieTitles = new ArrayList<String>();
+        for(int i = 0; i < movies.size(); i++){
+            ArrayList<String> workersM = new ArrayList<String>();
+            if(movies.get(i).getType() == MovieType.ANIMATED){
+                workersM = ((AnimatedMovie)(movies.get(i))).getAnimatorListString();
+            } else {
+                workersM = ((LiveActionMovie)(movies.get(i))).getActorListString();
+            }
 
-    public String getMoviesByActor(){
-        return null;
+            if(workersM != null) {
+                for (int j = 0; j < workersM.size(); j++) {
+                    if (workersM.get(j).equalsIgnoreCase(name)) {
+                        movieTitles.add(movies.get(i).getTitle());
+                    }
+                }
+            }
+        }
+
+        return movieTitles;
     }
 
     public boolean saveMovieToFile(int index){

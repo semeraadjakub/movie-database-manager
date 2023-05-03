@@ -173,6 +173,17 @@ public class Main {
                 case 6:
                     break;
                 case 7:
+                    manager.printWorkersList();
+                    System.out.println();
+                    System.out.print("Číslo herce/animátora k vyhledání: ");
+                    int workerInd = scanner.nextInt();
+                    scanner.nextLine();
+                    ArrayList<String> movieTitles = manager.getMovieTitlesByWorker(workerInd - 1);
+                    System.out.print("Filmy: \n");
+                    for(int i = 0; i < movieTitles.size(); i++){
+                        System.out.println("    " + movieTitles.get(i));
+                    }
+                    System.out.println();
                     break;
                 case 8:
                     manager.printMovieTitles();

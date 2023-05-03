@@ -49,4 +49,12 @@ public class LiveActionMovie extends Movie{
     public ArrayList<Actor> getActorList(){
         return actors;
     }
+
+    public ArrayList<String> getActorListString(){
+        ArrayList<String> actors1 = new ArrayList<String>();
+        for(Actor a : actors){
+            actors1.add(a.getName());
+        }
+        return actors1;
+    }
 }
