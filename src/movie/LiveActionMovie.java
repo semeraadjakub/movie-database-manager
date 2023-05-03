@@ -30,19 +30,17 @@ public class LiveActionMovie extends Movie{
         return -1;
     }
 
-    public boolean deleteActor(String name){
-        int index = getActorIndex(name);
-        if(index != -1){
+    public boolean deleteActor(int index){
+        if(index >= 0 && index < actors.size()){
             actors.remove(index);
             return true;
         }
         return false;
     }
 
-    public boolean modifyActorName(String name){
-        int index = getActorIndex(name);
-        if(index != -1){
-            actors.get(index).setName(name);
+    public boolean modifyActorName(String newName, int index){
+        if(index >= 0 && index < actors.size()){
+            actors.get(index).setName(newName);
             return true;
         }
         return false;

@@ -41,21 +41,23 @@ public class AnimatedMovie extends Movie{
         return -1;
     }
 
-    public boolean deleteAnimator(String name){
-        int index = getAnimatorIndex(name);
-        if(index != -1){
+    public boolean deleteAnimator(int index){
+        if(index >= 0 && index < animators.size())
+        {
             animators.remove(index);
             return true;
         }
+
         return false;
     }
 
-    public boolean modifyAnimatorName(String name){
-        int index = getAnimatorIndex(name);
-        if(index != -1){
-            animators.get(index).setName(name);
+    public boolean modifyAnimatorName(String newName, int index){
+        if(index >= 0 && index < animators.size())
+        {
+            animators.get(index).setName(newName);
             return true;
         }
+
         return false;
     }
 

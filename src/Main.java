@@ -1,5 +1,6 @@
 import movie.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -9,8 +10,8 @@ public class Main {
     private static final String MENU_STRING =   "[0] Konec\n[1] Přidat nový film\n[2] Smazat film\n[3] Upravit film\n" +
                                                 "[4] Vypsat všechny filmy\n[5] Vyhledat informace o filmu\n" +
                                                 "[6] Vypsat herce/animátory\n[7] Vyhledat filmy podle herce/animátora\n" +
-                                                "[8] Přidat hodnocení\n[9] Uložit informace o filmu do souboru\n" +
-                                                "[10] Načíst informmace o filmu ze souboru\n\n > ";
+                                                "[8] Přidat hodnocení\n[9] Uložit film do souboru\n" +
+                                                "[10] Načíst film ze souboru\n\n > ";
     public static void main(String[] args){
         //TODO: načtení informací z databáze
         Scanner scanner = new Scanner(System.in);
@@ -89,7 +90,8 @@ public class Main {
                     System.out.print("\nNázev filmu k úpravě: ");
                     movie = manager.getMovieByTitle(scanner.nextLine());
                     if(movie != null){
-                        System.out.println("\n[1] úprava názvu\n[2] změnit jméno režiséra\n[3] změnit rok vydání\n[4] upravit seznam " + (movie.getType() == MovieType.ANIMATED ? "animátorů" : "herců") + (movie.getType() == MovieType.ANIMATED ? "\n[5] změnit doporučený věk" : ""));
+                        System.out.println("\n[1] úprava názvu\n[2] změnit jméno režiséra\n[3] změnit rok vydání\n[4] upravit seznam " + (movie.getType() == MovieType.ANIMATED ? "animátorů" : "herců") + (movie.getType() == MovieType.ANIMATED ? "\n[5] změnit doporučený věk\n" : "\n"));
+                        System.out.print("Úprava: ");
                         option = scanner.nextByte();
                         scanner.nextLine();
 
@@ -115,25 +117,27 @@ public class Main {
                                 System.out.println("Možné operace: ");
                                 System.out.println("    [1] upravit jméno " + workerType);
                                 System.out.println("    [2] odstranit " + workerType);
+
+                                System.out.print("\nČíslo " + workerType + ": ");
+                                int workerInd = scanner.nextInt();
+                                scanner.nextLine();
                                 System.out.print("\noperace: ");
                                 String opt = scanner.nextLine();
                                 String name;
                                 if(opt.contentEquals("1")){
-                                    System.out.print("Jméno " + workerType + ": ");
+                                    System.out.print("nové jméno: ");
                                     name = scanner.nextLine();
                                     if(type == MovieType.ANIMATED){
-                                        ((AnimatedMovie)(movie)).modifyAnimatorName(name);
+                                        ((AnimatedMovie)(movie)).modifyAnimatorName(name, workerInd - 1);
                                     } else {
-                                        ((LiveActionMovie)(movie)).modifyActorName(name);
+                                        ((LiveActionMovie)(movie)).modifyActorName(name, workerInd - 1);
                                     }
 
                                 } else if (opt.contentEquals("2")) {
-                                    System.out.print("Jméno " + workerType + ": ");
-                                    name = scanner.nextLine();
                                     if(type == MovieType.ANIMATED){
-                                        ((AnimatedMovie)(movie)).deleteAnimator(name);
+                                        ((AnimatedMovie)(movie)).deleteAnimator(workerInd - 1);
                                     } else {
-                                        ((LiveActionMovie)(movie)).deleteActor(name);
+                                        ((LiveActionMovie)(movie)).deleteActor(workerInd - 1);
                                     }
                                 }
 
@@ -197,8 +201,17 @@ public class Main {
                     }
                     break;
                 case 9:
+                    manager.printMoviesTitles(true);
+                    System.out.print("Číslo filmu k uložení do souboru: ");
+                    manager.saveMovieToFile(scanner.nextInt() - 1);
+                    scanner.nextLine();
                     break;
                 case 10:
+                    final File folder = new File(System.getProperty("user.dir"));
+                    ArrayList<String> files = manager.listMovieFilesInFolder(folder);
+                    System.out.print("\nZadejte číslo filmu(souboru) k načtení: ");
+                    manager.loadMovieFromFile(files.get(scanner.nextInt()-1));
+                    scanner.nextLine();
                     break;
                 default:
                     System.out.println("Neplatná volba!");

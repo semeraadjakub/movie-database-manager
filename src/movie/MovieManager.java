@@ -1,9 +1,11 @@
 package movie;
 
+import Serialization.*;
 import custom.Rating;
 import worker.Actor;
 import worker.Animator;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -99,6 +101,13 @@ public class MovieManager {
         System.out.println();
     }
 
+    public void printMoviesTitles(boolean numbers){
+        for(int i = 0; i < movies.size(); i++){
+            System.out.println("[" + (i+1) + "] " + movies.get(i).getTitle());
+        }
+        System.out.println();
+    }
+
     public void printWorkersList(Movie movie, boolean numbers){
         int count = 1;
         if(movie.getType() == MovieType.ANIMATED){
@@ -162,11 +171,111 @@ public class MovieManager {
         return null;
     }
 
-    public boolean saveMovieToFile(String name){
+    public boolean saveMovieToFile(int index){
+        Movie movie = movies.get(index);
+        if(movie != null){
+            String title = movies.get(index).getTitle();
+            int type = movie.getType().ordinal();
+            title = title.replaceAll(" ", "-");
+            MDatabase moviedb = new MDatabase("db");
+            MObject movieObj = new MObject("MovieObject");
+            movieObj.add(MField.Integer("type", type));
+            movieObj.add(new MString("title", movie.title));
+            movieObj.add(new MString("director", movie.director));
+            movieObj.add(MField.Integer("releaseYear", movie.releaseYear));
+
+            int[] starRatings = new int[movie.ratings.size()];
+            String[] textRatings = new String[movie.ratings.size()];
+            for(int i = 0; i < movie.ratings.size(); i++){
+                starRatings[i] = movie.ratings.get(i).rating;
+                textRatings[i] = movie.ratings.get(i).textRating;
+            }
+            movieObj.add(MField.Integer("ratingCount", starRatings.length));
+            movieObj.add(MArray.Integer("rating", starRatings));
+            for(int i = 0; i < textRatings.length; i++){
+                movieObj.add(new MString(("textRating" + Integer.toString(i+1)), textRatings[i]));
+            }
+
+            if(movie.getType() == MovieType.ANIMATED){
+                movieObj.add(MField.Integer("recommendedAge", ((AnimatedMovie)(movie)).getRecommendedAge()));
+                movieObj.add(MField.Integer("animatorCount", ((AnimatedMovie)(movie)).getAnimatorList().size()));
+                for(int i = 0; i < ((AnimatedMovie)(movie)).getAnimatorList().size(); i++){
+                    movieObj.add(new MString(("animator" + Integer.toString(i+1)), ((AnimatedMovie)(movie)).getAnimatorList().get(i).getName()));
+                }
+            } else {
+                movieObj.add(MField.Integer("actorCount", ((LiveActionMovie)(movie)).getActorList().size()));
+                for(int i = 0; i < ((LiveActionMovie)(movie)).getActorList().size(); i++){
+                    movieObj.add(new MString(("actor" + Integer.toString(i+1)), ((LiveActionMovie)(movie)).getActorList().get(i).getName()));
+                }
+            }
+            moviedb.add(movieObj);
+            moviedb.serializeToFile(title + ".movie");
+            System.out.println("Film byl uložen do souboru pod názvem \"" + title + ".movie\"");
+            return true;
+        }
         return false;
     }
 
-    public boolean loadMovieFromFile(String name){
+    public boolean loadMovieFromFile(String path){
+        path = path.replaceAll(" ", "-");
+        MDatabase movieDeserialized = MDatabase.Deserialize(path);
+        MObject movie = movieDeserialized.findObject("MovieObject");
+        int type = movie.findField("type").getInt();
+        String title = movie.findString("title").getString();
+        String director = movie.findString("director").getString();
+        int releaseYear = movie.findField("releaseYear").getInt();
+        int ratingCount = movie.findField("ratingCount").getInt();
+        int[] ratings = movie.findArray("rating").getIntArray();
+        String[] textRatings = new String[ratings.length];
+        for(int i = 0; i < textRatings.length; i++){
+            textRatings[i] = movie.findString(("rating" + Integer.toString(i+1))).getString();
+        }
+
+        if(type == 0){
+            int recommendedAge = movie.findField("recommendedAge").getInt();
+            int animatorCount = movie.findField("animatorCount").getInt();
+            List<String> animators = new ArrayList<String>();
+            for(int i = 0; i < animatorCount; i++){
+                animators.add(movie.findString(("animator" + Integer.toString(i+1))).getString());
+            }
+
+            AnimatedMovie movieFinal = new AnimatedMovie(MovieType.ANIMATED, title, director, releaseYear, recommendedAge, animators);
+            for(int i = 0; i < ratingCount; i++){
+                rateMovie(movieFinal, ratings[i], textRatings[i]);
+            }
+            movies.add(movieFinal);
+            return true;
+
+        } else if(type == 1){
+            int actorCount = movie.findField("actorCount").getInt();
+            List<String> actors = new ArrayList<String>();
+            for(int i = 0; i < actorCount; i++){
+                actors.add(movie.findString(("actor" + Integer.toString(i+1))).getString());
+            }
+
+            LiveActionMovie movieFinal = new LiveActionMovie(MovieType.LIVE_ACTION, title, director, releaseYear, actors);
+            for(int i = 0; i < ratingCount; i++){
+                rateMovie(movieFinal, ratings[i], textRatings[i]);
+            }
+            movies.add(movieFinal);
+            return true;
+        }
         return false;
+    }
+
+    public ArrayList<String> listMovieFilesInFolder(final File folder) {
+        int count = 1;
+        ArrayList<String> files = new ArrayList<String>();
+        for (final File fileEntry : folder.listFiles()) {
+            if (!fileEntry.isDirectory()) {
+                if(fileEntry.getName().contains(".movie")) {
+                    System.out.println("[" + count + "] " + fileEntry.getName());
+                    files.add(fileEntry.getName());
+                    count++;
+                }
+            }
+        }
+
+        return files;
     }
 }
