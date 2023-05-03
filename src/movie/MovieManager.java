@@ -228,7 +228,13 @@ public class MovieManager {
         int[] ratings = movie.findArray("rating").getIntArray();
         String[] textRatings = new String[ratings.length];
         for(int i = 0; i < textRatings.length; i++){
-            textRatings[i] = movie.findString(("rating" + Integer.toString(i+1))).getString();
+            MString obj = movie.findString(("rating" + Integer.toString(i+1)));
+            String txtRating;
+            if(obj == null)
+                txtRating = new String("");
+            else
+                txtRating = obj.getString();
+            textRatings[i] = txtRating;
         }
 
         if(type == 0){
